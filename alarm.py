@@ -4,10 +4,12 @@ import pygame
 from ctypes import cast, POINTER
 from comtypes import CLSCTX_ALL
 from pycaw.pycaw import AudioUtilities, IAudioEndpointVolume
+import pythoncom
 
 class VolumeMute:
     
     def __init__(self):
+        pythoncom.CoInitialize()
         devices = AudioUtilities.GetSpeakers()
         interface = devices.Activate(
             IAudioEndpointVolume._iid_, CLSCTX_ALL, None)
@@ -26,16 +28,6 @@ class VolumeMute:
         self.set_mute_status(False)
         
 
-# get default audio device using PyCAW
-devices = AudioUtilities.GetSpeakers()
-interface = devices.Activate(
-    IAudioEndpointVolume._iid_, CLSCTX_ALL, None)
-volume = cast(interface, POINTER(IAudioEndpointVolume))
-
-
-
-
-   
 
 class Alarm:
     def __init__(self, sound_path: str="hestia/tools/system_and_utility/rain_alarm.mp3"):
@@ -111,6 +103,7 @@ if __name__ == "__main__":
     import time
     while alarm.is_active():
         time.sleep(1)
+    time.sleep(5)
     print("Alarm stopped. Good morning!")
     
     
